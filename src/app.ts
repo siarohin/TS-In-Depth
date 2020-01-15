@@ -11,12 +11,18 @@ import {
     getBookTitlesByCategory,
     logBookTitles,
     logFirstAvailable,
-    printBook
+    printBook,
+    purge
 } from "./functions";
 import { Category } from "./enums";
-import { Book, Logger, Author, Librarian } from "./interfaces";
-import { PersonBook } from "./types";
-import { RefBook, UniversityLibrarian } from "./classes";
+import { Book, Logger, Author, Librarian, Magazine } from "./interfaces";
+import {
+    PersonBook,
+    BookRequiredFields,
+    UpdatedBook,
+    CreateCustomerFunctionType
+} from "./types";
+import { RefBook, UniversityLibrarian, Shelf } from "./classes";
 
 showHello("greeting", "TypeScript");
 
@@ -134,3 +140,85 @@ const personBook: PersonBook = {
     id: 1
 };
 console.log(personBook);
+
+import("./classes").then(module => {
+    const reader = new module.Reader();
+    reader.name = "Ann";
+    reader.take(getAllBooks()[0]);
+    console.log(reader);
+});
+
+const inventory: Array<Book> = [
+    {
+        id: 10,
+        title: "The C Programming Language",
+        author: "K & R",
+        available: true,
+        category: Category.Software
+    },
+    {
+        id: 11,
+        title: "Code Complete",
+        author: "Steve McConnell",
+        available: true,
+        category: Category.Software
+    },
+    {
+        id: 12,
+        title: "8-Bit Graphics with Cobol",
+        author: "A. B.",
+        available: true,
+        category: Category.Software
+    },
+    {
+        id: 13,
+        title: "Cool autoexec.bat Scripts!",
+        author: "C. D.",
+        available: true,
+        category: Category.Software
+    }
+];
+
+console.log(purge<Book>(inventory));
+console.log(
+    purge<number>([1, 2, 3, 4, 5])
+);
+
+const bookShelf = new Shelf<Book>();
+inventory.forEach(book => bookShelf.add(book));
+
+const book = bookShelf.getFirst();
+console.log(book);
+
+const magazines: Array<Magazine> = [
+    { title: "Programming Language Monthly", publisher: "Code Mags" },
+    { title: "Literary Fiction Quarterly", publisher: "College Press" },
+    { title: "Five Points", publisher: "GSU" }
+];
+
+const magazineShelf: Shelf<Magazine> = new Shelf<Magazine>();
+magazineShelf.add(...magazines);
+const mag = magazineShelf.getFirst();
+console.log(mag);
+
+magazineShelf.printTitles();
+const findedRes = magazineShelf.find("Five Points");
+console.log(findedRes);
+
+const bookRequred: BookRequiredFields = {
+    id: 1,
+    title: "Book Title",
+    author: "Anna",
+    available: false,
+    category: Category.Angular,
+    pages: 250,
+    markDamaged: null
+};
+
+const updatedBook: UpdatedBook = {
+    id: 1,
+    title: "Book Title"
+};
+
+const params: Parameters<CreateCustomerFunctionType> = ["Anna"];
+createCusomer(...params);
